@@ -41,19 +41,17 @@ public class PolicyController {
 
         String aggregateId = UUID.randomUUID().toString();
 
-     commandGateway.sendAndWait(new CreatePolicyCommand(
-                aggregateId,
-            createPolicyCommand.name(),
-            createPolicyCommand.status(),
-            createPolicyCommand.startDate(),
-            createPolicyCommand.endDate()
-        ));
-
-        PolicyProjectionEntity created =  queryGateway.query(
-                new FindPolicyByAggregateIdQuery(aggregateId),
-                ResponseTypes.instanceOf(PolicyProjectionEntity.class)).join();
-
-        if (created == null) throw new PolicyNotCreatedException();
+        try {
+            commandGateway.sendAndWait(new CreatePolicyCommand(
+                    aggregateId,
+                    createPolicyCommand.name(),
+                    createPolicyCommand.status(),
+                    createPolicyCommand.startDate(),
+                    createPolicyCommand.endDate()
+            ));
+        } catch (Exception e) {
+            throw new PolicyNotCreatedException();
+        }
 
      return ResponseEntity
              .status(HttpStatus.CREATED).build();
