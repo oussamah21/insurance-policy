@@ -129,7 +129,7 @@ export default function App() {
               value={statusFilter}
               onChange={e => setFilter(e.target.value)}
             >
-              <option value="ALL">All Statuses</option>
+              <option value="ALL">All Status</option>
               <option value="ACTIVE">Active</option>
               <option value="INACTIVE">Inactive</option>
             </select>

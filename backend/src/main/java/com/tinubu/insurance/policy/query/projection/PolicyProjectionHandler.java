@@ -21,11 +21,11 @@ public class PolicyProjectionHandler {
     public void on(PolicyCreatedEvent event) {
 
         PolicyProjectionEntity entity = PolicyProjectionEntity.builder()
-                .aggregateId(event.getAggregateId())
-                .name(event.getName())
-                .status(event.getStatus())
-                .startDate(event.getStartDate())
-                .endDate(event.getEndDate())
+                .aggregateId(event.aggregateId())
+                .name(event.name())
+                .status(event.status())
+                .startDate(event.startDate())
+                .endDate(event.endDate())
                 .build();
 
         policyProjectionRepository.save(entity);
@@ -34,13 +34,13 @@ public class PolicyProjectionHandler {
     @EventHandler
     public void on(PolicyUpdatedEvent event) {
 
-        policyProjectionRepository.findByAggregateId(event.getAggregateId()).ifPresent(
+        policyProjectionRepository.findByAggregateId(event.aggregateId()).ifPresent(
                 entity -> {
-                    entity.setAggregateId(event.getAggregateId());
-                    entity.setName(event.getName());
-                    entity.setStatus(event.getStatus());
-                    entity.setStartDate(event.getStartDate());
-                    entity.setEndDate(event.getEndDate());
+                    entity.setAggregateId(event.aggregateId());
+                    entity.setName(event.name());
+                    entity.setStatus(event.status());
+                    entity.setStartDate(event.startDate());
+                    entity.setEndDate(event.endDate());
                     policyProjectionRepository.save(entity);
                 }
         );

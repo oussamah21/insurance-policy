@@ -31,47 +31,47 @@ public class PoliciesAggregate {
     @CommandHandler
     public PoliciesAggregate(CreatePolicyCommand createPolicyCommand) {
 
-        validateCoverageDates(createPolicyCommand.getStartDate(), createPolicyCommand.getEndDate());
+        validateCoverageDates(createPolicyCommand.startDate(), createPolicyCommand.endDate());
 
         apply(new PolicyCreatedEvent(
-                createPolicyCommand.getAggregateId(),
-                createPolicyCommand.getName(),
-                createPolicyCommand.getStatus(),
-                createPolicyCommand.getStartDate(),
-                createPolicyCommand.getEndDate()
+                createPolicyCommand.aggregateId(),
+                createPolicyCommand.name(),
+                createPolicyCommand.status(),
+                createPolicyCommand.startDate(),
+                createPolicyCommand.endDate()
         ));
     }
 
     @CommandHandler
     public void handle(UpdatePolicyCommand updatePolicyCommand) {
 
-        validateCoverageDates(updatePolicyCommand.getStartDate(), updatePolicyCommand.getEndDate());
+        validateCoverageDates(updatePolicyCommand.startDate(), updatePolicyCommand.endDate());
 
         apply(new PolicyUpdatedEvent(
-                updatePolicyCommand.getAggregateId(),
-                updatePolicyCommand.getName(),
-                updatePolicyCommand.getStatus(),
-                updatePolicyCommand.getStartDate(),
-                updatePolicyCommand.getEndDate()
+                updatePolicyCommand.aggregateId(),
+                updatePolicyCommand.name(),
+                updatePolicyCommand.status(),
+                updatePolicyCommand.startDate(),
+                updatePolicyCommand.endDate()
         ));
     }
 
 
     @EventSourcingHandler
     public void on(PolicyCreatedEvent policyCreatedEvent) {
-        this.aggregateId = policyCreatedEvent.getAggregateId();
-        this.name        = policyCreatedEvent.getName();
-        this.status      = policyCreatedEvent.getStatus();
-        this.startDate   = policyCreatedEvent.getStartDate();
-        this.endDate     = policyCreatedEvent.getEndDate();
+        this.aggregateId = policyCreatedEvent.aggregateId();
+        this.name        = policyCreatedEvent.name();
+        this.status      = policyCreatedEvent.status();
+        this.startDate   = policyCreatedEvent.startDate();
+        this.endDate     = policyCreatedEvent.endDate();
     }
 
     @EventSourcingHandler
     public void on(PolicyUpdatedEvent policyUpdatedEvent) {
-        this.name      = policyUpdatedEvent.getName();
-        this.status    = policyUpdatedEvent.getStatus();
-        this.startDate = policyUpdatedEvent.getStartDate();
-        this.endDate   = policyUpdatedEvent.getEndDate();
+        this.name      = policyUpdatedEvent.name();
+        this.status    = policyUpdatedEvent.status();
+        this.startDate = policyUpdatedEvent.startDate();
+        this.endDate   = policyUpdatedEvent.endDate();
     }
 
 

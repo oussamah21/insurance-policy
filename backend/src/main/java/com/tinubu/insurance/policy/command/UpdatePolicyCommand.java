@@ -9,19 +9,10 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
 import java.time.LocalDate;
 
-@Data
-@AllArgsConstructor
-public class UpdatePolicyCommand {
-
-    @TargetAggregateIdentifier
-    private String aggregateId;
-    @NotBlank
-    @NotNull
-    private String name;
-    @NotNull
-    private PolicyStatus status;
-    @NotNull
-    private LocalDate startDate;
-    @NotNull
-    private LocalDate endDate;
-}
+public record UpdatePolicyCommand(
+        @TargetAggregateIdentifier String aggregateId,
+        @NotBlank @NotNull String name,
+        @NotNull PolicyStatus status,
+        @NotNull LocalDate startDate,
+        @NotNull LocalDate endDate
+) {}

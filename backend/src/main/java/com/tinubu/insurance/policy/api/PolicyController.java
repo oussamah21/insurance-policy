@@ -39,10 +39,10 @@ public class PolicyController {
 
      commandGateway.sendAndWait(new CreatePolicyCommand(
                 aggregateId,
-            createPolicyCommand.getName(),
-            createPolicyCommand.getStatus(),
-            createPolicyCommand.getStartDate(),
-            createPolicyCommand.getEndDate()
+            createPolicyCommand.name(),
+            createPolicyCommand.status(),
+            createPolicyCommand.startDate(),
+            createPolicyCommand.endDate()
         ));
 
      return ResponseEntity
@@ -61,9 +61,15 @@ public class PolicyController {
                 ResponseTypes.instanceOf(PolicyProjectionEntity.class)
         ).thenCompose(policy -> {
 
-            updatePolicyCommand.setAggregateId(policy.getAggregateId());
+             var command = new UpdatePolicyCommand(
+                     policy.getAggregateId(),
+                     updatePolicyCommand.name(),
+                     updatePolicyCommand.status(),
+                     updatePolicyCommand.startDate(),
+                     updatePolicyCommand.endDate()
+             );
 
-            return commandGateway.send(updatePolicyCommand);
+            return commandGateway.send(command);
         }).join();
 
         return ResponseEntity

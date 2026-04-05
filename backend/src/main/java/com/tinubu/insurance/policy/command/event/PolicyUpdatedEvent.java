@@ -7,13 +7,10 @@ import lombok.Data;
 import java.time.LocalDate;
 
 
-@Data
-@AllArgsConstructor
-public class PolicyUpdatedEvent {
-
-    String aggregateId;
-    String name;
-    PolicyStatus status;
-    LocalDate startDate;
-    LocalDate endDate;
-}
+public record PolicyUpdatedEvent(
+        String aggregateId,
+        String name,
+        PolicyStatus status,
+        LocalDate startDate,
+        LocalDate endDate
+) {}
