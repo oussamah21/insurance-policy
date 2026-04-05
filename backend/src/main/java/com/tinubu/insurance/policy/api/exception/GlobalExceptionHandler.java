@@ -21,6 +21,18 @@ public class GlobalExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(PolicyNotCreatedException.class)
+    public ProblemDetail handleNotCreated(PolicyNotFoundException ex) {
+        log.warn("Policy not created: {}", ex.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
+
+    @ExceptionHandler(PolicyNotUpdatedException.class)
+    public ProblemDetail handleNotUpdated(PolicyNotFoundException ex) {
+        log.warn("Policy not updated: {}", ex.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidation(MethodArgumentNotValidException ex) {
         Map<String, String> errors = ex.getBindingResult().getFieldErrors().stream()

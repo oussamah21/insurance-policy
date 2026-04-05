@@ -2,10 +2,13 @@ package com.tinubu.insurance.policy.api;
 
 
 import com.tinubu.insurance.policy.api.dto.PolicyResponse;
+import com.tinubu.insurance.policy.api.exception.PolicyNotCreatedException;
 import com.tinubu.insurance.policy.api.exception.PolicyNotFoundException;
+import com.tinubu.insurance.policy.api.exception.PolicyNotUpdatedException;
 import com.tinubu.insurance.policy.command.CreatePolicyCommand;
 import com.tinubu.insurance.policy.command.UpdatePolicyCommand;
 import com.tinubu.insurance.policy.query.queries.FindAllPoliciesQuery;
+import com.tinubu.insurance.policy.query.queries.FindPolicyByAggregateIdQuery;
 import com.tinubu.insurance.policy.query.queries.FindPolicyByIdQuery;
 import com.tinubu.insurance.policy.infrastructure.persistance.PolicyProjectionEntity;
 import jakarta.validation.Valid;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletionException;
 
 
 @RestController
@@ -45,6 +49,12 @@ public class PolicyController {
             createPolicyCommand.endDate()
         ));
 
+        PolicyProjectionEntity created =  queryGateway.query(
+                new FindPolicyByAggregateIdQuery(aggregateId),
+                ResponseTypes.instanceOf(PolicyProjectionEntity.class)).join();
+
+        if (created == null) throw new PolicyNotCreatedException();
+
      return ResponseEntity
              .status(HttpStatus.CREATED).build();
 
@@ -55,22 +65,30 @@ public class PolicyController {
             @PathVariable Integer id,
             @Valid @RequestBody UpdatePolicyCommand updatePolicyCommand) {
 
+        try {
+            queryGateway.query(
+                    new FindPolicyByIdQuery(id),
+                    ResponseTypes.instanceOf(PolicyProjectionEntity.class)
+            ).thenCompose(policy -> {
 
-         queryGateway.query(
-                new FindPolicyByIdQuery(id),
-                ResponseTypes.instanceOf(PolicyProjectionEntity.class)
-        ).thenCompose(policy -> {
+                if (policy == null) {
+                    throw new PolicyNotFoundException(id);
+                }
 
-             var command = new UpdatePolicyCommand(
-                     policy.getAggregateId(),
-                     updatePolicyCommand.name(),
-                     updatePolicyCommand.status(),
-                     updatePolicyCommand.startDate(),
-                     updatePolicyCommand.endDate()
-             );
+                var command = new UpdatePolicyCommand(
+                        policy.getAggregateId(),
+                        updatePolicyCommand.name(),
+                        updatePolicyCommand.status(),
+                        updatePolicyCommand.startDate(),
+                        updatePolicyCommand.endDate()
+                );
 
-            return commandGateway.send(command);
-        }).join();
+                return commandGateway.send(command);
+            }).join();
+        } catch (CompletionException e) {
+
+            throw new PolicyNotUpdatedException();
+        }
 
         return ResponseEntity
                 .status(HttpStatus.OK).build();
