@@ -1,4 +1,4 @@
-# 🛡️ PolicyHub — Insurance Policy Manager
+# 🛡️ Insurance Policy Manager
 
 A fullstack application for managing insurance policies, built with **Spring Boot** (backend) and **React** (frontend), containerised with **Docker Compose**.
 
@@ -39,10 +39,10 @@ insurance-policy-fullstack/
 
 ## Build & Run
 
-### 1 — Clone / unzip the project
+### 1 — Clone  the project
 
 ```bash
-unzip insurance-policy-fullstack.zip
+git clone https://github.com/oussamah21/insurance-policy.git
 cd insurance-policy-fullstack
 ```
 
