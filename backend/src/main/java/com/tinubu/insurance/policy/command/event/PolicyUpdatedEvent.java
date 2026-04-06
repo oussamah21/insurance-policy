@@ -1,8 +1,6 @@
 package com.tinubu.insurance.policy.command.event;
 
-import com.tinubu.insurance.policy.command.model.PolicyStatus;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.tinubu.insurance.policy.command.enums.PolicyStatus;
 
 import java.time.LocalDate;
 

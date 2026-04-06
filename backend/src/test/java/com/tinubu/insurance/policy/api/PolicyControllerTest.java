@@ -1,8 +1,9 @@
 package com.tinubu.insurance.policy.api;
 
 import com.tinubu.insurance.policy.command.CreatePolicyCommand;
-import com.tinubu.insurance.policy.command.model.PolicyStatus;
+import com.tinubu.insurance.policy.command.enums.PolicyStatus;
 import com.tinubu.insurance.policy.infrastructure.persistance.PolicyProjectionEntity;
+import com.tinubu.insurance.policy.query.model.PolicyProjectionDto;
 import com.tinubu.insurance.policy.query.queries.FindPolicyByIdQuery;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.messaging.responsetypes.ResponseType;
@@ -67,13 +68,23 @@ class PolicyControllerTest {
     @Test
     void shouldFetchPolicyById() throws Exception {
 
-        PolicyProjectionEntity entity = new PolicyProjectionEntity();
+        PolicyProjectionDto policyProjectionDto = new PolicyProjectionDto(
+                1,
+                "aggregate-1",
+                "Test Policy",
+                PolicyStatus.ACTIVE,
+                LocalDate.now(),
+                LocalDate.now().plusYears(1),
+                LocalDate.now(),
+                LocalDate.now()
+        );
 
-        ResponseType<Optional<PolicyProjectionEntity>> responseType =
-                ResponseTypes.optionalInstanceOf(PolicyProjectionEntity.class);
+
+        ResponseType<Optional<PolicyProjectionDto>> responseType =
+                ResponseTypes.optionalInstanceOf(PolicyProjectionDto.class);
 
         when(queryGateway.query(any(), eq(responseType)))
-                .thenReturn(CompletableFuture.completedFuture(Optional.of(entity)));
+                .thenReturn(CompletableFuture.completedFuture(Optional.of(policyProjectionDto)));
 
 
         mockMvc.perform(get("/api/policies/1"))
@@ -81,7 +92,7 @@ class PolicyControllerTest {
 
         verify(queryGateway, times(1)).query(
                 any(FindPolicyByIdQuery.class),
-                eq(ResponseTypes.optionalInstanceOf(PolicyProjectionEntity.class))
+                eq(ResponseTypes.optionalInstanceOf(PolicyProjectionDto.class))
         );
     }
 

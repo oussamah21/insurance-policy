@@ -1,4 +1,4 @@
-package com.tinubu.insurance.policy.command.model;
+package com.tinubu.insurance.policy.command.enums;
 
 
 public enum PolicyStatus {

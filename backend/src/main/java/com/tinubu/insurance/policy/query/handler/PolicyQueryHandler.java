@@ -2,6 +2,7 @@ package com.tinubu.insurance.policy.query.handler;
 
 import com.tinubu.insurance.policy.infrastructure.persistance.PolicyProjectionEntity;
 import com.tinubu.insurance.policy.infrastructure.persistance.PolicyProjectionRepository;
+import com.tinubu.insurance.policy.query.model.PolicyProjectionDto;
 import com.tinubu.insurance.policy.query.port.PolicyProjectionPort;
 import com.tinubu.insurance.policy.query.queries.FindAllPoliciesQuery;
 import com.tinubu.insurance.policy.query.queries.FindPolicyByAggregateIdQuery;
@@ -24,17 +25,17 @@ public class PolicyQueryHandler {
 
 
     @QueryHandler
-    public List<PolicyProjectionEntity> handle(FindAllPoliciesQuery query) {
+    public List<PolicyProjectionDto> handle(FindAllPoliciesQuery query) {
         return policyProjectionPort.findAll();
     }
 
     @QueryHandler
-    public Optional<PolicyProjectionEntity> handle(FindPolicyByIdQuery query) {
+    public Optional<PolicyProjectionDto> handle(FindPolicyByIdQuery query) {
         return policyProjectionPort.findById(query.id());
     }
 
     @QueryHandler
-    public Optional<PolicyProjectionEntity> handle(FindPolicyByAggregateIdQuery query) {
+    public Optional<PolicyProjectionDto> handle(FindPolicyByAggregateIdQuery query) {
         return policyProjectionPort.findByAggregateId(query.aggregateId());
     }
 }

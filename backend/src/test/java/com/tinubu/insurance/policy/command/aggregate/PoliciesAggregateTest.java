@@ -4,7 +4,7 @@ import com.tinubu.insurance.policy.command.CreatePolicyCommand;
 import com.tinubu.insurance.policy.command.UpdatePolicyCommand;
 import com.tinubu.insurance.policy.command.event.PolicyCreatedEvent;
 import com.tinubu.insurance.policy.command.event.PolicyUpdatedEvent;
-import com.tinubu.insurance.policy.command.model.PolicyStatus;
+import com.tinubu.insurance.policy.command.enums.PolicyStatus;
 import org.axonframework.test.aggregate.AggregateTestFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

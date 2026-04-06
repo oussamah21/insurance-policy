@@ -2,12 +2,15 @@ package com.tinubu.insurance.policy.query.projection;
 
 import com.tinubu.insurance.policy.command.event.PolicyCreatedEvent;
 import com.tinubu.insurance.policy.command.event.PolicyUpdatedEvent;
-import com.tinubu.insurance.policy.command.model.PolicyStatus;
+import com.tinubu.insurance.policy.command.enums.PolicyStatus;
 import com.tinubu.insurance.policy.infrastructure.persistance.PolicyProjectionRepository;
+import com.tinubu.insurance.policy.query.model.PolicyProjectionDto;
+import com.tinubu.insurance.policy.query.port.PolicyProjectionPort;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 
 class PolicyProjectionHandlerTest {
@@ -15,8 +18,8 @@ class PolicyProjectionHandlerTest {
     @Test
     void shouldHandlePolicyCreatedEvent() {
 
-        PolicyProjectionRepository repository = Mockito.mock(PolicyProjectionRepository.class);
-        PolicyProjectionHandler projection = new PolicyProjectionHandler(repository);
+        PolicyProjectionPort port = Mockito.mock(PolicyProjectionPort.class);
+        PolicyProjectionHandler projection = new PolicyProjectionHandler(port);
 
         PolicyCreatedEvent event = new PolicyCreatedEvent(
                 "agg-1",
@@ -28,27 +31,27 @@ class PolicyProjectionHandlerTest {
 
         projection.on(event);
 
-        Mockito.verify(repository).save(Mockito.any());
+        Mockito.verify(port).save(Mockito.any());
     }
 
     @Test
     void shouldHandlePolicyUpdatedEvent() {
 
-        PolicyProjectionRepository repository = Mockito.mock(PolicyProjectionRepository.class);
-        PolicyProjectionHandler projection = new PolicyProjectionHandler(repository);
+        PolicyProjectionPort port = Mockito.mock(PolicyProjectionPort.class);
+        PolicyProjectionHandler projection = new PolicyProjectionHandler(port);
 
-        PolicyCreatedEvent createdEvent = new PolicyCreatedEvent(
+        PolicyProjectionDto existing = new PolicyProjectionDto(
+                1,
                 "agg-1",
                 "Policy",
                 PolicyStatus.ACTIVE,
                 LocalDate.now(),
-                LocalDate.now().plusDays(5)
+                LocalDate.now().plusDays(5),
+                LocalDate.now(),
+                LocalDate.now()
         );
 
-        projection.on(createdEvent);
-
-        Mockito.verify(repository,Mockito.times(1)).save(Mockito.any());
-        Mockito.verify(repository,Mockito.times(0)).findByAggregateId(Mockito.any());
+        Mockito.when(port.findByAggregateId("agg-1")).thenReturn(Optional.of(existing));
 
         PolicyUpdatedEvent updatedEvent = new PolicyUpdatedEvent(
                 "agg-1",
@@ -60,7 +63,7 @@ class PolicyProjectionHandlerTest {
 
         projection.on(updatedEvent);
 
-        Mockito.verify(repository,Mockito.times(1)).findByAggregateId(Mockito.any());
-        Mockito.verify(repository,Mockito.times(1)).save(Mockito.any());
+        Mockito.verify(port, Mockito.times(1)).findByAggregateId("agg-1");
+        Mockito.verify(port, Mockito.times(1)).save(Mockito.any());
     }
 }

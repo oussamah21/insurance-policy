@@ -3,46 +3,45 @@ package com.tinubu.insurance.policy.query.projection;
 
 import com.tinubu.insurance.policy.command.event.PolicyCreatedEvent;
 import com.tinubu.insurance.policy.command.event.PolicyUpdatedEvent;
-import com.tinubu.insurance.policy.infrastructure.persistance.PolicyProjectionEntity;
-import com.tinubu.insurance.policy.infrastructure.persistance.PolicyProjectionRepository;
+import com.tinubu.insurance.policy.query.model.PolicyProjectionDto;
+import com.tinubu.insurance.policy.query.port.PolicyProjectionPort;
+import lombok.RequiredArgsConstructor;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class PolicyProjectionHandler {
 
-    private final PolicyProjectionRepository policyProjectionRepository;
-
-    public PolicyProjectionHandler(PolicyProjectionRepository policyProjectionRepository) {
-        this.policyProjectionRepository = policyProjectionRepository;
-    }
+    private final PolicyProjectionPort policyProjectionPort;
 
     @EventHandler
     public void on(PolicyCreatedEvent event) {
-
-        PolicyProjectionEntity entity = PolicyProjectionEntity.builder()
-                .aggregateId(event.aggregateId())
-                .name(event.name())
-                .status(event.status())
-                .startDate(event.startDate())
-                .endDate(event.endDate())
-                .build();
-
-        policyProjectionRepository.save(entity);
+        policyProjectionPort.save(new PolicyProjectionDto(
+                null,
+                event.aggregateId(),
+                event.name(),
+                event.status(),
+                event.startDate(),
+                event.endDate(),
+                null,
+                null
+        ));
     }
 
     @EventHandler
     public void on(PolicyUpdatedEvent event) {
-
-        policyProjectionRepository.findByAggregateId(event.aggregateId()).ifPresent(
-                entity -> {
-                    entity.setAggregateId(event.aggregateId());
-                    entity.setName(event.name());
-                    entity.setStatus(event.status());
-                    entity.setStartDate(event.startDate());
-                    entity.setEndDate(event.endDate());
-                    policyProjectionRepository.save(entity);
-                }
+        policyProjectionPort.findByAggregateId(event.aggregateId()).ifPresent(existing ->
+                policyProjectionPort.save(new PolicyProjectionDto(
+                        existing.id(),
+                        event.aggregateId(),
+                        event.name(),
+                        event.status(),
+                        event.startDate(),
+                        event.endDate(),
+                        existing.createdAt(),
+                        null
+                ))
         );
     }
 }

@@ -5,7 +5,7 @@ import com.tinubu.insurance.policy.command.CreatePolicyCommand;
 import com.tinubu.insurance.policy.command.UpdatePolicyCommand;
 import com.tinubu.insurance.policy.command.event.PolicyCreatedEvent;
 import com.tinubu.insurance.policy.command.event.PolicyUpdatedEvent;
-import com.tinubu.insurance.policy.command.model.PolicyStatus;
+import com.tinubu.insurance.policy.command.enums.PolicyStatus;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -68,6 +68,7 @@ public class PoliciesAggregate {
 
     @EventSourcingHandler
     public void on(PolicyUpdatedEvent policyUpdatedEvent) {
+        this.aggregateId = policyUpdatedEvent.aggregateId();
         this.name      = policyUpdatedEvent.name();
         this.status    = policyUpdatedEvent.status();
         this.startDate = policyUpdatedEvent.startDate();

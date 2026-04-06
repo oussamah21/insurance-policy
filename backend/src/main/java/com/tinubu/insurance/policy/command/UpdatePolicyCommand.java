@@ -1,10 +1,8 @@
 package com.tinubu.insurance.policy.command;
 
-import com.tinubu.insurance.policy.command.model.PolicyStatus;
+import com.tinubu.insurance.policy.command.enums.PolicyStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
 import java.time.LocalDate;

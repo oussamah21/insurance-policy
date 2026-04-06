@@ -7,10 +7,9 @@ import com.tinubu.insurance.policy.api.exception.PolicyNotFoundException;
 import com.tinubu.insurance.policy.api.exception.PolicyNotUpdatedException;
 import com.tinubu.insurance.policy.command.CreatePolicyCommand;
 import com.tinubu.insurance.policy.command.UpdatePolicyCommand;
+import com.tinubu.insurance.policy.query.model.PolicyProjectionDto;
 import com.tinubu.insurance.policy.query.queries.FindAllPoliciesQuery;
-import com.tinubu.insurance.policy.query.queries.FindPolicyByAggregateIdQuery;
 import com.tinubu.insurance.policy.query.queries.FindPolicyByIdQuery;
-import com.tinubu.insurance.policy.infrastructure.persistance.PolicyProjectionEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.commandhandling.gateway.CommandGateway;
@@ -66,15 +65,15 @@ public class PolicyController {
         try {
             queryGateway.query(
                     new FindPolicyByIdQuery(id),
-                    ResponseTypes.instanceOf(PolicyProjectionEntity.class)
+                    ResponseTypes.optionalInstanceOf(PolicyProjectionDto.class)
             ).thenCompose(policy -> {
 
-                if (policy == null) {
+                if (policy.isEmpty()) {
                     throw new PolicyNotFoundException(id);
                 }
 
                 var command = new UpdatePolicyCommand(
-                        policy.getAggregateId(),
+                        policy.get().aggregateId(),
                         updatePolicyCommand.name(),
                         updatePolicyCommand.status(),
                         updatePolicyCommand.startDate(),
@@ -96,9 +95,9 @@ public class PolicyController {
     public ResponseEntity<List<PolicyResponse>> fetchAll() {
 
 
-       List<PolicyProjectionEntity> policies = queryGateway.query(
+       List<PolicyProjectionDto> policies = queryGateway.query(
                 new FindAllPoliciesQuery(),
-                ResponseTypes.multipleInstancesOf(PolicyProjectionEntity.class)
+                ResponseTypes.multipleInstancesOf(PolicyProjectionDto.class)
         ).join();
 
 
@@ -113,7 +112,7 @@ public class PolicyController {
             @PathVariable Integer id) {
 
 
-        Optional<PolicyProjectionEntity> policyOptional = queryGateway.query(new FindPolicyByIdQuery(id), ResponseTypes.optionalInstanceOf(PolicyProjectionEntity.class)).join();
+        Optional<PolicyProjectionDto> policyOptional = queryGateway.query(new FindPolicyByIdQuery(id), ResponseTypes.optionalInstanceOf(PolicyProjectionDto.class)).join();
 
 
         return policyOptional.map(e -> ResponseEntity.ok(PolicyResponse.from(e)))

@@ -1,6 +1,6 @@
 package com.tinubu.insurance.policy.infrastructure.persistance;
 
-import com.tinubu.insurance.policy.command.model.PolicyStatus;
+import com.tinubu.insurance.policy.command.enums.PolicyStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -59,4 +59,6 @@ public class PolicyProjectionEntity {
     public void preUpdate() {
         this.updatedAt = LocalDate.now();
     }
+
+
 }
